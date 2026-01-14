@@ -13,7 +13,7 @@ FROM node:lts-alpine AS runtime
 WORKDIR /opt/app
 
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--dns-result-order=ipv4first"
+ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --production
@@ -32,4 +32,4 @@ USER strapi
 
 EXPOSE 1337
 
-CMD ["yarn", "start"]
+CMD ["node", "--dns-result-order=ipv4first", "./node_modules/.bin/strapi", "start"]

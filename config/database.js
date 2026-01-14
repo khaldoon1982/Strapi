@@ -1,58 +1,19 @@
 const path = require('path');
-const dns = require('dns');
-
-// Force IPv4 DNS resolution
-const lookup = (hostname, options, callback) => {
-  return dns.lookup(hostname, { ...options, family: 4 }, callback);
-};
 
 module.exports = ({ env }) => {
-  // Always use 'postgres' as client when DATABASE_URL is set
-  const client = env('DATABASE_URL') ? 'postgres' : env('DATABASE_CLIENT', 'postgres');
+  const client = env('DATABASE_CLIENT', 'postgres');
 
   const connections = {
-    mysql: {
-      connection: {
-        host: env('DATABASE_HOST'),
-        port: env.int('DATABASE_PORT', 3306),
-        database: env('DATABASE_NAME', 'strapi'),
-        user: env('DATABASE_USERNAME', 'strapi'),
-        password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          key: env('DATABASE_SSL_KEY', undefined),
-          cert: env('DATABASE_SSL_CERT', undefined),
-          ca: env('DATABASE_SSL_CA', undefined),
-          capath: env('DATABASE_SSL_CAPATH', undefined),
-          cipher: env('DATABASE_SSL_CIPHER', undefined),
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
-        },
-      },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
-    },
     postgres: {
       connection: {
-        ...(env('DATABASE_URL')
-          ? {
-              connectionString: env('DATABASE_URL'),
-              ssl: { rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', false) },
-            }
-          : {
-              host: env('DATABASE_HOST'),
-              port: env.int('DATABASE_PORT', 5432),
-              database: env('DATABASE_NAME', 'postgres'),
-              user: env('DATABASE_USERNAME'),
-              password: env('DATABASE_PASSWORD'),
-              ssl: env.bool('DATABASE_SSL', true)
-                ? { rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', false) }
-                : false,
-              schema: env('DATABASE_SCHEMA', 'public'),
-            }),
-        lookup, // Force IPv4 DNS resolution
+        host: env('DATABASE_HOST'),
+        port: env.int('DATABASE_PORT', 5432),
+        database: env('DATABASE_NAME', 'postgres'),
+        user: env('DATABASE_USERNAME'),
+        password: env('DATABASE_PASSWORD'),
+        ssl: { rejectUnauthorized: false },
       },
-      pool: { 
-        min: env.int('DATABASE_POOL_MIN', 0), 
-        max: env.int('DATABASE_POOL_MAX', 5),
-      },
+      pool: { min: 0, max: 5 },
     },
     sqlite: {
       connection: {

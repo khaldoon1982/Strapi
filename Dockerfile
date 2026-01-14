@@ -17,7 +17,7 @@ RUN apk add --no-cache vips-dev
 WORKDIR /opt/app
 
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--dns-result-order=ipv4first"
+ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
 COPY package.json package-lock.json ./
 RUN npm ci --only=production
@@ -36,4 +36,4 @@ USER strapi
 
 EXPOSE 1337
 
-CMD ["npm", "run", "start"]
+CMD ["node", "--dns-result-order=ipv4first", "./node_modules/.bin/strapi", "start"]
