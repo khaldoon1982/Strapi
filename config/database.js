@@ -5,14 +5,19 @@ module.exports = ({ env }) => {
 
   const connections = {
     postgres: {
-      connection: {
-        host: env('DATABASE_HOST'),
-        port: env.int('DATABASE_PORT', 5432),
-        database: env('DATABASE_NAME', 'postgres'),
-        user: env('DATABASE_USERNAME'),
-        password: env('DATABASE_PASSWORD'),
-        ssl: { rejectUnauthorized: false },
-      },
+      connection: env('DATABASE_URL')
+        ? {
+            connectionString: env('DATABASE_URL'),
+            ssl: { rejectUnauthorized: false },
+          }
+        : {
+            host: env('DATABASE_HOST'),
+            port: env.int('DATABASE_PORT', 5432),
+            database: env('DATABASE_NAME', 'postgres'),
+            user: env('DATABASE_USERNAME'),
+            password: env('DATABASE_PASSWORD'),
+            ssl: { rejectUnauthorized: false },
+          },
       pool: { min: 0, max: 5 },
     },
     sqlite: {
