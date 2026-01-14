@@ -24,6 +24,7 @@ COPY --from=build /opt/app/public ./public
 COPY --from=build /opt/app/database ./database
 COPY --from=build /opt/app/build ./build
 COPY --from=build /opt/app/favicon.png ./favicon.png
+COPY --from=build /opt/app/start.js ./start.js
 
 RUN addgroup -S strapi && adduser -S strapi -G strapi
 RUN mkdir -p /opt/app/public/uploads && chown -R strapi:strapi /opt/app
@@ -32,4 +33,4 @@ USER strapi
 
 EXPOSE 1337
 
-CMD ["node", "--dns-result-order=ipv4first", "./node_modules/.bin/strapi", "start"]
+CMD ["node", "start.js"]
